@@ -893,6 +893,32 @@ int LAGraph_HelloWorld // a simple algorithm, just for illustration
     char *msg
 ) ;
 
+//------------------------------------------------------------------------------
+// coloring algorithms
+//------------------------------------------------------------------------------
+
+LAGRAPHX_PUBLIC
+int LAGraph_coloring_simple
+(
+    // output
+    GrB_Vector *C,
+
+    // input
+    LAGraph_Graph G,
+    char *msg
+) ;
+
+LAGRAPHX_PUBLIC
+int LAGraph_coloring_simple_optimized
+(
+    // output
+    GrB_Vector *color,
+
+    // input
+    LAGraph_Graph G,
+    char *msg
+) ;
+
 #if defined ( __cplusplus )
 }
 #endif
