@@ -42,13 +42,13 @@ void test_coloring_simple(void)
     /* run the algorithm */
     /* DEBUG PRINT */ if (verbose) { printf("\n"); LAGraph_Matrix_Print(G->A, LAGraph_SHORT, stdout, msg); printf("[ DEBUG ] running alg"); }
 
-    // LG_SET_BURBLE(true);
+    GRB_TRY (GxB_set (GxB_BURBLE, false)) ;
 
     double time = LAGraph_WallClockTime();
     LAGraph_coloring_simple_optimized(&C, G, msg);
     time = LAGraph_WallClockTime() - time;
 
-    // LG_SET_BURBLE(false);
+    GRB_TRY (GxB_set (GxB_BURBLE, false)) ;
 
     printf("\nTook %g seconds\n", time);
     /* DEBUG PRINT */ if (verbose) { printf("[ DEBUG ] finished alg, color vector:\n"); LAGraph_Vector_Print(C, LAGraph_SHORT, stdout, msg); }
