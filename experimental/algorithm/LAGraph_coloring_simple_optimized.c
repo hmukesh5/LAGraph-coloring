@@ -50,6 +50,7 @@ int LAGraph_coloring_simple_optimized
 
         /* eWiseAdd - 1 if current weight > max neighboring weight */
         GRB_TRY(GrB_eWiseMult(in_curr_subset, GrB_NULL, GrB_NULL, GrB_GT_UINT64, weight, max_weights, GrB_NULL));
+        /* select - select all entries in in_curr_subset that are true, and delete falses */
         GRB_TRY(GrB_select(in_curr_subset, GrB_NULL, GrB_NULL, GrB_VALUEEQ_BOOL, in_curr_subset, true, GrB_NULL));
 
         /* reduce - OR all entries in in_curr_subset - if false, break */
