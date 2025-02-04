@@ -9,15 +9,18 @@
 #include <LG_Xtest.h>
 #include <LG_test.h>
 
-// error msg buffer
-char msg[LAGRAPH_MSG_LEN];
 
+char msg[LAGRAPH_MSG_LEN];
 LAGraph_Graph G = NULL;
 
 #define LEN 512
 char filename[LEN + 1];
 
-void test_coloring_simple(void)
+const char* matrix_files[] = {
+    "ldbc-undirected-example-unweighted.mtx",
+}
+
+void test_coloring_independent_set(void)
 {
     /* defines whether my [ DEBUG ] messages are printed */
     bool verbose = false;
@@ -40,18 +43,22 @@ void test_coloring_simple(void)
     TEST_CHECK(A == NULL); // A has been moved into G->A
 
     /* run the algorithm */
-    /* DEBUG PRINT */ if (verbose) { printf("\n"); LAGraph_Matrix_Print(G->A, LAGraph_SHORT, stdout, msg); printf("[ DEBUG ] running alg"); }
+    GxB_set (GxB_BURBLE, false) ;
 
-    GRB_TRY (GxB_set (GxB_BURBLE, false)) ;
-
-    double time = LAGraph_WallClockTime();
-    LAGraph_coloring_simple_optimized(&C, G, msg);
+    int num_colors = 0;
+    double time = LAGraph_WallClockTime();    
+    LAGraph_coloring_independent_set_optimized(&C, &num_colors, G, msg);
     time = LAGraph_WallClockTime() - time;
 
-    GRB_TRY (GxB_set (GxB_BURBLE, false)) ;
+    GxB_set (GxB_BURBLE, false) ;
 
     printf("\nTook %g seconds\n", time);
     /* DEBUG PRINT */ if (verbose) { printf("[ DEBUG ] finished alg, color vector:\n"); LAGraph_Vector_Print(C, LAGraph_SHORT, stdout, msg); }
+
+    
+    // ------------------------------------------------
+    // check if coloring is valid
+    // ------------------------------------------------
 
     /* extract graph in CSC form
     *  CSC form:
@@ -63,6 +70,15 @@ void test_coloring_simple(void)
     *  note: CSC is same as CSR for undirected graphs
     *        maybe use the one that's more efficient
     *        ( prevent converting from one to other )
+    *
+    *  convert Ap_size from bytes to indices
+    *   - make sure to loop only up to Ap_size - 1
+    *     when checking [Ap_index] to [Ap_index + 1]
+    * 
+    *  traverse through unpacked matrix and
+    *  check current node's color against its neighbors
+    *   - Ap_index: current node
+    *   - Ai_index: a neighbor
     */
     GrB_Index *Ap = NULL;
     GrB_Index *Ai = NULL;
@@ -70,18 +86,8 @@ void test_coloring_simple(void)
     GrB_Index Ap_size, Ai_size, Ax_size;
     GRB_TRY(GxB_Matrix_unpack_CSC(G->A, &Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, NULL, NULL, NULL));
     
-    /*  convert Ap_size from bytes to indices
-    *   - make sure to loop only up to Ap_size - 1
-    *     when checking [Ap_index] to [Ap_index + 1]
-    */
     Ap_size = Ap_size / sizeof(GrB_Index);
-
-    /* traverse through unpacked matrix and
-    *  check current node's color against its neighbors
-    *   - Ap_index: current node
-    *   - Ai_index: a neighbor
-    */
-   /* DEBUG PRINT */ if (verbose) { printf("[ DEBUG ] traversing unpacked matrix\n"); }
+   
     GrB_Index Ap_index;
     GrB_Index Ai_index;
     GrB_Index Ai_index_start, Ai_index_end;
@@ -102,15 +108,8 @@ void test_coloring_simple(void)
         }
     }
 
-    /* DEBUG PRINT */ if (verbose) { printf("[ DEBUG ] finished traversing unpacked matrix\n"); }
 
-
-
-    /* get number of colors - aka get max of vector C */
-    int num_colors = 0;
-    GrB_reduce(&num_colors, GrB_NULL, GrB_MAX_MONOID_INT32, C, NULL);
     printf("Number of Colors: %d\n", num_colors);
-
 
 
     /* clean up (don't understand this) */
@@ -119,12 +118,8 @@ void test_coloring_simple(void)
     LAGraph_Random_Finalize(msg);
 }
 
-
-/* used to run tests
-*  always end on {NULL, NULL}
-*/
 TEST_LIST =
 {
-    {"coloring_simple", test_coloring_simple},
+    {"coloring_independent_set", test_coloring_independent_set},
     {NULL, NULL}
 };

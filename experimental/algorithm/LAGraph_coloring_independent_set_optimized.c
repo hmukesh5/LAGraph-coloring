@@ -2,17 +2,21 @@
 #include "LAGraphX.h"
 // add this algorithm to LAGraphX.h
 
-#define LG_FREE_ALL                 \
+#define LG_FREE_WORK                \
     GrB_free (&local_color) ;       \
     GrB_free (&weight) ;            \
     GrB_free (&in_curr_subset) ;    \
     GrB_free (&max_weights) ;
 
-int LAGraph_coloring_simple_optimized
+#define LG_FREE_ALL                 \
+    LG_FREE_WORK ;                  \
+    GrB_free (&color) ;
+
+int LAGraph_coloring_independent_set_optimized
 (
     // output
     GrB_Vector *color,
-    // add number of colors as output
+    int *num_colors,
 
     // input
     LAGraph_Graph G,
@@ -46,7 +50,8 @@ int LAGraph_coloring_simple_optimized
     GRB_TRY(GrB_Vector_new(&max_weights, GrB_UINT64, n));
 
     /* algorithm start */
-    for (int64_t curr_color = 1; curr_color < n+1; curr_color++) {
+    int64_t curr_color;
+    for (curr_color = 1; curr_color < n+1; curr_color++) {
         /* mxv - find maximum of all neighboring weights */
 
         // FIXME: try using a set of sparse candidate nodes, not yet colored
@@ -73,6 +78,7 @@ int LAGraph_coloring_simple_optimized
         GRB_TRY(GrB_assign(weight, in_curr_subset, GrB_NULL, 0, GrB_ALL, n, GrB_DESC_S));
     }
 
+    (*num_colors) = curr_color - 1;
     (*color) = local_color;
     local_color = NULL ;
     LG_FREE_ALL ;

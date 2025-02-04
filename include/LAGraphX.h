@@ -898,7 +898,7 @@ int LAGraph_HelloWorld // a simple algorithm, just for illustration
 //------------------------------------------------------------------------------
 
 LAGRAPHX_PUBLIC
-int LAGraph_coloring_simple
+int LAGraph_coloring_independent_set
 (
     // output
     GrB_Vector *C,
@@ -909,10 +909,11 @@ int LAGraph_coloring_simple
 ) ;
 
 LAGRAPHX_PUBLIC
-int LAGraph_coloring_simple_optimized
+int LAGraph_coloring_independent_set_optimized
 (
     // output
     GrB_Vector *color,
+    int *num_colors,
 
     // input
     LAGraph_Graph G,

@@ -2,7 +2,7 @@
 #include "LAGraphX.h"
 // add this algorithm to LAGraphX.h
 
-int LAGraph_coloring_simple
+int LAGraph_independent_set
 (
     // output
     GrB_Vector *C,
