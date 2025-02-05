@@ -44,6 +44,9 @@ int LAGraph_coloring_independent_set_optimized
     *  seed of 20 was chosen arbitrarily */   
     GRB_TRY(GrB_Vector_new(&weight, GrB_UINT64, n));
     GRB_TRY(GrB_assign (weight, NULL, NULL, 0, GrB_ALL, n, NULL));
+
+    printf(" here we go \n");
+
     LG_TRY(LAGraph_Random_Seed(weight, 20, msg));
 
     printf("random done\n");
