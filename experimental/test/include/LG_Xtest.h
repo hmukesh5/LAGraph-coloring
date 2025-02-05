@@ -58,4 +58,11 @@ int LG_check_kcore_decompose
     char *msg
 ) ;
 
+int LG_check_coloring
+(
+    LAGraph_Graph G,
+    GrB_Vector C,
+    char *msg
+) ;
+
 #endif

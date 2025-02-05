@@ -22,9 +22,6 @@ const char* matrix_files[] = {
 
 void test_coloring_independent_set(void)
 {
-    /* defines whether my [ DEBUG ] messages are printed */
-    bool verbose = false;
-
     /* required initialization (found from other test files) */
     LAGraph_Init(msg);
     LAGraph_Random_Init(msg);
@@ -53,60 +50,14 @@ void test_coloring_independent_set(void)
     GxB_set (GxB_BURBLE, false) ;
 
     printf("\nTook %g seconds\n", time);
-    /* DEBUG PRINT */ if (verbose) { printf("[ DEBUG ] finished alg, color vector:\n"); LAGraph_Vector_Print(C, LAGraph_SHORT, stdout, msg); }
+    printf("Final color vector:\n"); LAGraph_Vector_Print(C, LAGraph_SHORT, stdout, msg); }
 
     
     // ------------------------------------------------
     // check if coloring is valid
     // ------------------------------------------------
 
-    /* extract graph in CSC form
-    *  CSC form:
-    *  Ap: start and end indices of Ai that represent a column of A
-    *  Ai: values that represent the row indices of A where there is a value
-    *       - in our case, these are the neighbors' IDs
-    *  Ax: the values of that edge, stored in the same order as Ai
-    *       - in our case, all values are 1
-    *  note: CSC is same as CSR for undirected graphs
-    *        maybe use the one that's more efficient
-    *        ( prevent converting from one to other )
-    *
-    *  convert Ap_size from bytes to indices
-    *   - make sure to loop only up to Ap_size - 1
-    *     when checking [Ap_index] to [Ap_index + 1]
-    * 
-    *  traverse through unpacked matrix and
-    *  check current node's color against its neighbors
-    *   - Ap_index: current node
-    *   - Ai_index: a neighbor
-    */
-    GrB_Index *Ap = NULL;
-    GrB_Index *Ai = NULL;
-    void *Ax = NULL;
-    GrB_Index Ap_size, Ai_size, Ax_size;
-    GRB_TRY(GxB_Matrix_unpack_CSC(G->A, &Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, NULL, NULL, NULL));
-    
-    Ap_size = Ap_size / sizeof(GrB_Index);
-   
-    GrB_Index Ap_index;
-    GrB_Index Ai_index;
-    GrB_Index Ai_index_start, Ai_index_end;
-    int current_color, neighbor_color;
-    for (Ap_index = 0; Ap_index < Ap_size - 1; Ap_index++) {
-        
-        Ai_index_start = Ap[Ap_index];
-        Ai_index_end = Ap[Ap_index + 1];
-
-        GrB_Vector_extractElement(&current_color, C, Ap_index);
-
-        for (Ai_index = Ai_index_start; Ai_index < Ai_index_end; Ai_index++) {
-            GrB_Vector_extractElement(&neighbor_color, C, Ai[Ai_index]);
-
-            /* DEBUG PRINT */ if (verbose) { printf("[ DEBUG ] current_color: %d, neighbor_color: %d\n", current_color, neighbor_color); }
-
-            TEST_ASSERT(neighbor_color != current_color);
-        }
-    }
+    OK (LG_check_coloring(G->A, C, msg));
 
 
     printf("Number of Colors: %d\n", num_colors);
