@@ -22,7 +22,7 @@ int LAGraph_coloring_independent_set_optimized
     char *msg
 )
 {
-    print("initial graph: \n");
+    printf("initial graph: \n");
     LAGraph_Matrix_Print(G->A, LAGraph_SHORT, stdout, msg);
 
     bool verbose = false;
