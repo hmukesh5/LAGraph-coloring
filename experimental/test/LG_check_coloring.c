@@ -1,17 +1,3 @@
-#define LG_FREE_WORK                    \
-{                                       \
-    GrB_free (&Ap) ;                    \
-    GrB_free (&Ai) ;                    \
-    GrB_free (&Ax) ;                    \
-
-}
-
-#define LG_FREE_ALL                     \
-{                                       \
-    LG_FREE_WORK ;                      \
-}
-
-
 #define LAGRAPH_COLORING_RETURN_VALUES
 #define LAGRAPH_COLORING_INVALID_COLORING   (-5501)
 

@@ -1,13 +1,8 @@
-// no idea about these 2 includes
-#include <stdio.h>
-#include <acutest.h>
-
-// includes from LAGraph, also dunno
-#include <LG_internal.h>
-#include <LAGraphX.h>
-#include <LAGraph_test.h>
-#include <LG_Xtest.h>
-#include <LG_test.h>
+#include <stdio.h>              // ?
+#include "LG_internal.h"        // ?
+#include "LAGraph_test.h"       // for TEST_CHECK
+#include "LAGraphX.h"           // for LAGraph_coloring_independent_set
+#include "LG_Xtest.h"           // for LG_check_coloring
 
 
 char msg[LAGRAPH_MSG_LEN];
@@ -18,7 +13,7 @@ char filename[LEN + 1];
 
 const char* matrix_files[] = {
     "ldbc-undirected-example-unweighted.mtx",
-}
+};
 
 void test_coloring_independent_set(void)
 {
@@ -50,14 +45,15 @@ void test_coloring_independent_set(void)
     GxB_set (GxB_BURBLE, false) ;
 
     printf("\nTook %g seconds\n", time);
-    printf("Final color vector:\n"); LAGraph_Vector_Print(C, LAGraph_SHORT, stdout, msg); }
+    printf("Initial Matrix:\n"); LAGraph_Matrix_Print(G->A, LAGraph_SHORT, stdout, msg);
+    printf("Final color vector:\n"); LAGraph_Vector_Print(C, LAGraph_SHORT, stdout, msg);
 
     
     // ------------------------------------------------
     // check if coloring is valid
     // ------------------------------------------------
 
-    OK (LG_check_coloring(G->A, C, msg));
+    OK (LG_check_coloring(G, C, msg));
 
 
     printf("Number of Colors: %d\n", num_colors);

@@ -60,6 +60,7 @@ int LG_check_kcore_decompose
 
 int LG_check_coloring
 (
+    // inputs
     LAGraph_Graph G,
     GrB_Vector C,
     char *msg

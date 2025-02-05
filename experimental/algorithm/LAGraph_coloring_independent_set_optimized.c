@@ -9,8 +9,7 @@
     GrB_free (&max_weights) ;
 
 #define LG_FREE_ALL                 \
-    LG_FREE_WORK ;                  \
-    GrB_free (&color) ;
+    LG_FREE_WORK ;
 
 int LAGraph_coloring_independent_set_optimized
 (
