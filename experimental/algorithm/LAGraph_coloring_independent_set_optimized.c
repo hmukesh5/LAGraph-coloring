@@ -51,6 +51,8 @@ int LAGraph_coloring_independent_set_optimized
     LAGraph_Random_Seed(weight, 2, msg);
 
     printf("random done\n");
+    printf("weight vector\n");
+    GxB_print(weight, 3);
 
     GRB_TRY(GrB_Vector_new(&in_curr_subset, GrB_BOOL, n));
 
