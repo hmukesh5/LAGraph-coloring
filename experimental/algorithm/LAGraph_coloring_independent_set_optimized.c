@@ -43,7 +43,7 @@ int LAGraph_coloring_independent_set_optimized
     *  seed of 20 was chosen arbitrarily */   
     GRB_TRY(GrB_Vector_new(&weight, GrB_UINT64, n));
     GRB_TRY(GrB_assign (weight, NULL, NULL, 0, GrB_ALL, n, NULL));
-    LAGraph_Random_Seed(weight, 20, msg);
+    LG_TRY(LAGraph_Random_Seed(weight, 20, msg));
 
     GRB_TRY(GrB_Vector_new(&in_curr_subset, GrB_BOOL, n));
 
