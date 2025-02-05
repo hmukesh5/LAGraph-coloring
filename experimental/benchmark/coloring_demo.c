@@ -50,7 +50,8 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     // execute independent set coloring algorithm
     //--------------------------------------------------------------------------
-
+    
+    printf ("running algorithm\n") ;
     t = LAGraph_WallClockTime ( ) ;
     LG_TRY (LAGraph_coloring_independent_set_optimized (&C, &num_colors, G, msg)) ;
     t = LAGraph_WallClockTime ( ) - t ;
