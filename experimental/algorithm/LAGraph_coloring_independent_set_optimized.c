@@ -38,6 +38,8 @@ int LAGraph_coloring_independent_set_optimized
 
     // lg_set_format_hint -> bitmap
 
+    printf("random_seed\n");
+
     /* weights initialized randomly
     *  seed of 20 was chosen arbitrarily */   
     GRB_TRY(GrB_Vector_new(&weight, GrB_UINT64, n));
