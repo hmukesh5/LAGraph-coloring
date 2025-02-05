@@ -47,7 +47,8 @@ int LAGraph_coloring_independent_set_optimized
 
     printf(" here we go \n");
 
-    LG_TRY(LAGraph_Random_Seed(weight, 20, msg));
+    // LG_TRY(LAGraph_Random_Seed(weight, 2, msg));
+    LAGraph_Random_Seed(weight, 2, msg);
 
     printf("random done\n");
 
