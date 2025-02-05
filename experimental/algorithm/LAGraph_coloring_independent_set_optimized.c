@@ -49,6 +49,7 @@ int LAGraph_coloring_independent_set_optimized
     GRB_TRY(GrB_Vector_new(&max_weights, GrB_UINT64, n));
 
     /* algorithm start */
+    printf("starting algorithm\n");
     int64_t curr_color;
     for (curr_color = 1; curr_color < n+1; curr_color++) {
         /* mxv - find maximum of all neighboring weights */
@@ -76,7 +77,7 @@ int LAGraph_coloring_independent_set_optimized
         /* assign - write 0 to weight according to in_curr_subset mask */
         GRB_TRY(GrB_assign(weight, in_curr_subset, GrB_NULL, 0, GrB_ALL, n, GrB_DESC_S));
     }
-
+    printf("finished algorithm\n");
     (*num_colors) = curr_color - 1;
     (*color) = local_color;
     local_color = NULL ;
