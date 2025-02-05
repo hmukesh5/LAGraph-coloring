@@ -22,6 +22,9 @@ int LAGraph_coloring_independent_set_optimized
     char *msg
 )
 {
+    print("initial graph: \n");
+    LAGraph_Matrix_Print(G->A, LAGraph_SHORT, stdout, msg);
+
     bool verbose = false;
     GrB_Vector local_color = NULL;
     GrB_Vector weight = NULL;
@@ -48,7 +51,7 @@ int LAGraph_coloring_independent_set_optimized
     printf(" here we go \n");
 
     // LG_TRY(LAGraph_Random_Seed(weight, 2, msg));
-    LAGraph_Random_Seed(weight, 2, msg);
+    LG_TRY (LAGraph_Random_Seed(weight, 2, msg)) ;
 
     printf("random done\n");
     printf("weight vector\n");
