@@ -60,7 +60,7 @@ int main (int argc, char **argv)
     printf ("Time for Independent Set Coloring: %g sec\n", t) ;
 
     //--------------------------------------------------------------------------
-    // check the results (make sure Y is a copy of G->A)
+    // check the results
     //--------------------------------------------------------------------------
 
     bool isequal ;
@@ -70,7 +70,7 @@ int main (int argc, char **argv)
     printf ("Time to check results:       %g sec\n", t) ;
 
     //--------------------------------------------------------------------------
-    // print the results (Y is just a copy of G->A)
+    // print the results
     //--------------------------------------------------------------------------
 
     printf ("\n===============================Number of colors: %d\n", num_colors) ;
