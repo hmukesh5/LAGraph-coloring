@@ -2,12 +2,14 @@
 #include "LAGraphX.h"
 // add this algorithm to LAGraphX.h
 
+#undef  LG_FREE_WORK
 #define LG_FREE_WORK                \
     GrB_free (&local_color) ;       \
     GrB_free (&weight) ;            \
     GrB_free (&in_curr_subset) ;    \
     GrB_free (&max_weights) ;
 
+#undef  LG_FREE_ALL
 #define LG_FREE_ALL                 \
     LG_FREE_WORK ;
 
