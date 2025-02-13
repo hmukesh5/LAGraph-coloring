@@ -1,6 +1,5 @@
-#include "LG_internal.h"
-#include "LAGraphX.h"
-// add this algorithm to LAGraphX.h
+#include "LG_internal.h" // contains all internal grb operations
+#include "LAGraphX.h"    // algorithm added to LAGraphX.h
 
 #undef  LG_FREE_WORK
 #define LG_FREE_WORK                \

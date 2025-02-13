@@ -1,7 +1,7 @@
-#include "../../src/benchmark/LAGraph_demo.h"
-#include "LAGraphX.h"           // for LAGraph_coloring_independent_set
-#include "LG_Xtest.h"           // for LG_check_coloring
-#include "LG_internal.h"        // ?
+#include "../../src/benchmark/LAGraph_demo.h"   // for readproblem
+#include "LAGraphX.h"                           // for LAGraph_coloring_independent_set
+#include "LG_Xtest.h"                           // for LG_check_coloring
+#include "LG_internal.h"                        // ?
 
 // LG_FREE_ALL is required by LG_TRY
 #undef  LG_FREE_ALL
