@@ -45,19 +45,16 @@ int main (int argc, char **argv)
     t = LAGraph_WallClockTime ( ) - t ;
     printf ("Time to read the graph:      %g sec\n", t) ;
 
-    printf ("\n==========================The input graph matrix G:\n") ;
-    LG_TRY (LAGraph_Graph_Print (G, LAGraph_SHORT, stdout, msg)) ;
+    // printf ("\n==========================The input graph matrix G:\n") ;
+    // LG_TRY (LAGraph_Graph_Print (G, LAGraph_SHORT, stdout, msg)) ;
 
     //--------------------------------------------------------------------------
     // execute independent set coloring algorithm
     //--------------------------------------------------------------------------
     
-    printf ("running algorithm\n") ;
     t = LAGraph_WallClockTime ( ) ;
     int status = (LAGraph_coloring_independent_set_optimized (&C, &num_colors, G, msg)) ;
     t = LAGraph_WallClockTime ( ) - t ;
-    printf ("status = %d\n", status) ;
-    printf ("msg = %s\n", msg) ;
     printf ("Time for Independent Set Coloring: %g sec\n", t) ;
 
     //--------------------------------------------------------------------------
