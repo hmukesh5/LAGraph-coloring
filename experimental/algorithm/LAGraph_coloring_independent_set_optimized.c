@@ -23,8 +23,8 @@ int LAGraph_coloring_independent_set_optimized
     char *msg
 )
 {
-    printf("initial graph: \n");
-    LAGraph_Matrix_Print(G->A, LAGraph_SHORT, stdout, msg);
+    // printf("initial graph: \n");
+    // LAGraph_Matrix_Print(G->A, LAGraph_SHORT, stdout, msg);
 
     bool verbose = false;
     GrB_Vector local_color = NULL;
@@ -42,28 +42,24 @@ int LAGraph_coloring_independent_set_optimized
 
     // lg_set_format_hint -> bitmap
 
-    printf("random_seed\n");
-
     /* weights initialized randomly
     *  seed of 20 was chosen arbitrarily */   
     GRB_TRY(GrB_Vector_new(&weight, GrB_UINT64, n));
     GRB_TRY(GrB_assign (weight, NULL, NULL, 0, GrB_ALL, n, NULL));
 
-    printf(" here we go \n");
-
     // LG_TRY(LAGraph_Random_Seed(weight, 2, msg));
     LG_TRY (LAGraph_Random_Seed(weight, 2, msg)) ;
 
-    printf("random done\n");
-    printf("weight vector\n");
-    GxB_print(weight, 3);
+    // printf("random done\n");
+    // printf("weight vector\n");
+    // GxB_print(weight, 3);
 
     GRB_TRY(GrB_Vector_new(&in_curr_subset, GrB_BOOL, n));
 
     GRB_TRY(GrB_Vector_new(&max_weights, GrB_UINT64, n));
 
     /* algorithm start */
-    printf("starting algorithm\n");
+    // printf("starting algorithm\n");
     int64_t curr_color;
     for (curr_color = 1; curr_color < n+1; curr_color++) {
         /* mxv - find maximum of all neighboring weights */
@@ -91,7 +87,7 @@ int LAGraph_coloring_independent_set_optimized
         /* assign - write 0 to weight according to in_curr_subset mask */
         GRB_TRY(GrB_assign(weight, in_curr_subset, GrB_NULL, 0, GrB_ALL, n, GrB_DESC_S));
     }
-    printf("finished algorithm\n");
+    // printf("finished algorithm\n");
     (*num_colors) = curr_color - 1;
     (*color) = local_color;
     local_color = NULL ;
