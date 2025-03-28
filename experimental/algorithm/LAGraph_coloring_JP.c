@@ -165,6 +165,10 @@ int LAGraph_coloring_JP
                 LAGraph_any_one_bool, A, independent_set, GrB_DESC_RS)) ;
             GRB_TRY (GrB_assign (MIS_candidates, independent_set_neighbors, GrB_NULL,
                 empty, GrB_ALL, n, GrB_DESC_S)) ;
+
+            // print matrices
+            LAGraph_Vector_Print(MIS_candidates, 2, stdout, msg) ;
+            LAGraph_Vector_Print(independent_set, 2, stdout, msg) ;
             
             
             // STEP 3: check quit condition
