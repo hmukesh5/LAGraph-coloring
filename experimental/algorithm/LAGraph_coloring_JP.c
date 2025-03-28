@@ -132,6 +132,7 @@ int LAGraph_coloring_JP
         GrB_Index num_stalls = 0;
 
         // prints: check if everything is good
+        printf("printing A, candidates, MIS_candidates\n");
         LAGraph_Matrix_Print(A, 2, stdout, msg);
         LAGraph_Vector_Print(candidates, 2, stdout, msg);
         LAGraph_Vector_Print(MIS_candidates, 2, stdout, msg);
