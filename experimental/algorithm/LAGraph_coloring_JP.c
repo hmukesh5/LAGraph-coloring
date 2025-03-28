@@ -68,7 +68,7 @@ int LAGraph_coloring_JP
     GrB_Vector weights = NULL;                      // random weights
     GrB_Vector max_neighbor_weights = NULL;         // maximum random weight of neighbors
     GrB_Vector independent_set_neighbors = NULL;    // neighbors of independent set
-    GrB_Vector independent_set_neighbors_colors = NULL; // colors of neighbors
+    GrB_Matrix independent_set_neighbors_colors = NULL; // colors of neighbors
 
     GrB_Vector empty = NULL;                        // empty vector for sparsification
     GrB_Matrix A = NULL;                            // adjacency matrix of G
