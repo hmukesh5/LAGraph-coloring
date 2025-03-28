@@ -131,6 +131,9 @@ int LAGraph_coloring_JP
         // FIXME: check if vector_dup is faster
         GRB_TRY (GrB_assign (MIS_candidates, GrB_NULL, GrB_NULL, candidates,
             GrB_ALL, n, GrB_DESC_R)) ;
+        GRB_TRY (GrB_assign (weights, candidates, GrB_NULL, 0,
+            GrB_ALL, n, GrB_DESC_R)) ;
+        LG_TRY (LAGraph_Random_Seed(weights, seed, msg)) ;
 
         GrB_Index num_MIS_candidates = 0;        
         GRB_TRY (GrB_Vector_nvals (&num_MIS_candidates, MIS_candidates)) ;
@@ -174,6 +177,8 @@ int LAGraph_coloring_JP
             GRB_TRY (GrB_mxv (independent_set_neighbors, MIS_candidates, GrB_NULL,
                 LAGraph_any_one_bool, A, independent_set, GrB_DESC_RS)) ;
             GRB_TRY (GrB_assign (MIS_candidates, independent_set_neighbors, GrB_NULL,
+                empty, GrB_ALL, n, GrB_DESC_S)) ;
+            GRB_TRY (GrB_assign (weights, independent_set_neighbors, GrB_NULL,
                 empty, GrB_ALL, n, GrB_DESC_S)) ;
 
             // print matrices
