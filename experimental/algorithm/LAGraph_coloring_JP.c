@@ -218,7 +218,7 @@ int LAGraph_coloring_JP
         // reset independent_set
         GRB_TRY(GrB_assign(candidates, independent_set, GrB_NULL, empty, GrB_ALL, n, GrB_DESC_S)) ;
         GRB_TRY (GrB_Vector_nvals (&num_candidates, candidates)) ;
-        GRB_TRY (GrB_assign (independent_set, candidates, GrB_NULL, empty)) ;
+        GRB_TRY (GrB_assign (independent_set, GrB_NULL, GrB_NULL, empty, GrB_ALL, n, GrB_NULL)) ;
     }
     JP_num_colors_copy = curr_color - 1;
     
