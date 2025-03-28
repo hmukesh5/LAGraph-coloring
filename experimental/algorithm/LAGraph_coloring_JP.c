@@ -213,7 +213,7 @@ int LAGraph_coloring_JP
         printf("trying neighbor colors...")
         GRB_TRY( GrB_mxm(independent_set_neighbors_colors, independent_set, GrB_NULL,
             GrB_SECOND_SEMIRING_UINT64, A, JP_coloring_copy, GrB_DESC_RS));
-        LAGraph_Matrix_Print(indpendent_set_neighbors_colors, 2, stdout, msg) ;
+        LAGraph_Matrix_Print(independent_set_neighbors_colors, 2, stdout, msg) ;
         
         // alternate approach: MIS
         // color independnet set
