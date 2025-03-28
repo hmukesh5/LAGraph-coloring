@@ -132,9 +132,11 @@ int LAGraph_coloring_JP
         GrB_Index num_stalls = 0;
 
         // prints: check if everything is good
-        printf("printing A, candidates, MIS_candidates\n");
+        printf("--------- A \n");
         LAGraph_Matrix_Print(A, 2, stdout, msg);
+        printf("--------- candidates \n");
         LAGraph_Vector_Print(candidates, 2, stdout, msg);
+        printf("--------- MIS_candidates \n");
         LAGraph_Vector_Print(MIS_candidates, 2, stdout, msg);
 
         while (num_MIS_candidates > 0) {
@@ -173,7 +175,9 @@ int LAGraph_coloring_JP
                 empty, GrB_ALL, n, GrB_DESC_S)) ;
 
             // print matrices
+            printf("--------- MIS_candidates \n");
             LAGraph_Vector_Print(MIS_candidates, 2, stdout, msg) ;
+            printf("--------- independent_set \n");
             LAGraph_Vector_Print(independent_set, 2, stdout, msg) ;
             
             
