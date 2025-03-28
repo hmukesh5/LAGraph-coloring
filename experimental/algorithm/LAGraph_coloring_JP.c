@@ -120,10 +120,10 @@ int LAGraph_coloring_JP
     GRB_TRY (GrB_Vector_nvals (&num_candidates, candidates)) ;
     int64_t curr_color = 1;
 
-    printf("--------- A \n");
-    LAGraph_Matrix_Print(A, 2, stdout, msg);
-    printf("--------- weights \n");
-    LAGraph_Vector_Print(weights, 2, stdout, msg);
+    // printf("--------- A \n");
+    // LAGraph_Matrix_Print(A, 2, stdout, msg);
+    // printf("--------- weights \n");
+    // LAGraph_Vector_Print(weights, 2, stdout, msg);
 
     while (num_candidates > 0) {
         // STEP 0: copy candidates to MIS_candidates
