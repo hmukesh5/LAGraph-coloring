@@ -131,6 +131,11 @@ int LAGraph_coloring_JP
         GrB_Index last_num_MIS_candidates = num_MIS_candidates;
         GrB_Index num_stalls = 0;
 
+        // prints: check if everything is good
+        LAGraph_Matrix_Print(A, 2, stdout, msg);
+        LAGraph_Vector_Print(candidates, 2, stdout, msg);
+        LAGraph_Vector_Print(MIS_candidates, 2, stdout, msg);
+
         while (num_MIS_candidates > 0) {
             
             // STEP 1: pick winners
