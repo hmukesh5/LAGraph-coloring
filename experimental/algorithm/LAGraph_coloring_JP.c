@@ -138,6 +138,8 @@ int LAGraph_coloring_JP
         LAGraph_Vector_Print(candidates, 2, stdout, msg);
         printf("--------- MIS_candidates \n");
         LAGraph_Vector_Print(MIS_candidates, 2, stdout, msg);
+        printf("--------- weights \n");
+        LAGraph_Vector_Print(weights, 2, stdout, msg);
 
         while (num_MIS_candidates > 0) {
             
