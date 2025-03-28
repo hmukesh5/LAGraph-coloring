@@ -5,6 +5,7 @@
 #define LG_FREE_WORK                \
 {                                   \
     GrB_free (&weights) ;           \
+    GrB_free (&weights_copy) ;           \
     GrB_free (&max_neighbor_weights); \
     GrB_free (&empty) ;             \
     GrB_free (&candidates) ;        \
@@ -66,6 +67,7 @@ int LAGraph_coloring_JP
     GrB_Vector MIS_candidates = NULL;               // MIS candidates
     GrB_Vector independent_set = NULL;              // independent set
     GrB_Vector weights = NULL;                      // random weights
+    GrB_Vector weights_copy = NULL;                 // weights copy
     GrB_Vector max_neighbor_weights = NULL;         // maximum random weight of neighbors
     GrB_Vector independent_set_neighbors = NULL;    // neighbors of independent set
     GrB_Matrix independent_set_neighbors_colors = NULL; // colors of neighbors
@@ -97,7 +99,7 @@ int LAGraph_coloring_JP
     GRB_TRY (GrB_Matrix_nrows (&n, A)) ;
     GRB_TRY (GrB_Vector_new (&weights, GrB_UINT64, n)) ;
     GRB_TRY (GrB_assign (weights, NULL, NULL, 0, GrB_ALL, n, NULL)) ;
-    LG_TRY (LAGraph_Random_Seed(weights, seed, msg)) ;
+    LG_TRY (LAGraph_Random_Seed(weights, seed, msg)) ;    
     GRB_TRY (GrB_Vector_new (&max_neighbor_weights, GrB_UINT64, n)) ;
     GRB_TRY (GrB_Vector_new (&empty, GrB_BOOL, n)) ;
     GRB_TRY (GrB_Vector_new (&independent_set, GrB_BOOL, n)) ;
@@ -129,11 +131,11 @@ int LAGraph_coloring_JP
         // STEP 0: copy candidates to MIS_candidates
         // assign: copy + replace old values
         // FIXME: check if vector_dup is faster
+        // reset weights
         GRB_TRY (GrB_assign (MIS_candidates, GrB_NULL, GrB_NULL, candidates,
             GrB_ALL, n, GrB_DESC_R)) ;
-        GRB_TRY (GrB_assign (weights, candidates, GrB_NULL, 0,
-            GrB_ALL, n, GrB_DESC_RS)) ;
-        LG_TRY (LAGraph_Random_Seed(weights, seed, msg)) ;
+        GRB_TRY (GrB_assign (weights_copy, candidates, GrB_NULL, weights,
+            GrB_ALL, n, GrB_DESC_RS)) ; 
 
         GrB_Index num_MIS_candidates = 0;        
         GRB_TRY (GrB_Vector_nvals (&num_MIS_candidates, MIS_candidates)) ;
@@ -159,9 +161,9 @@ int LAGraph_coloring_JP
             //
             // FIXME: add push vs pull        
             GRB_TRY(GrB_mxv(max_neighbor_weights, MIS_candidates, GrB_NULL,                 
-                GrB_MAX_SECOND_SEMIRING_UINT64, A, weights, GrB_DESC_RS));
+                GrB_MAX_SECOND_SEMIRING_UINT64, A, weights_copy, GrB_DESC_RS));
             GRB_TRY(GrB_eWiseAdd(independent_set, MIS_candidates, GrB_LOR,
-                GrB_GT_UINT64, weights, max_neighbor_weights, GrB_DESC_S));
+                GrB_GT_UINT64, weights_copy, max_neighbor_weights, GrB_DESC_S));
             GRB_TRY(GrB_select(independent_set, GrB_NULL, GrB_NULL, 
                 GrB_VALUEEQ_BOOL, independent_set, true, GrB_NULL));
 
@@ -178,7 +180,7 @@ int LAGraph_coloring_JP
                 LAGraph_any_one_bool, A, independent_set, GrB_DESC_RS)) ;
             GRB_TRY (GrB_assign (MIS_candidates, independent_set_neighbors, GrB_NULL,
                 empty, GrB_ALL, n, GrB_DESC_S)) ;
-            GRB_TRY (GrB_assign (weights, independent_set_neighbors, GrB_NULL,
+            GRB_TRY (GrB_assign (weights_copy, independent_set_neighbors, GrB_NULL,
                 empty, GrB_ALL, n, GrB_DESC_S)) ;
 
             // print matrices
@@ -199,7 +201,7 @@ int LAGraph_coloring_JP
             if (num_MIS_candidates == last_num_MIS_candidates) {
                 num_stalls++ ;
                 LG_ASSERT_MSG (num_stalls <= NUM_ALLOWED_STALLS, JP_COLORING_STALLED, "MIS stalled") ;
-                LG_TRY (LAGraph_Random_Next (weights, msg)) ;
+                LG_TRY (LAGraph_Random_Next (weights_copy, msg)) ;
             }
             last_num_MIS_candidates = num_MIS_candidates;
 
