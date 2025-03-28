@@ -120,6 +120,11 @@ int LAGraph_coloring_JP
     GRB_TRY (GrB_Vector_nvals (&num_candidates, candidates)) ;
     int64_t curr_color = 0;
 
+    printf("--------- A \n");
+    LAGraph_Matrix_Print(A, 2, stdout, msg);
+    printf("--------- weights \n");
+    LAGraph_Vector_Print(weights, 2, stdout, msg);
+
     while (num_candidates > 0) {
         // STEP 0: copy candidates to MIS_candidates
         // assign: copy + replace old values
@@ -132,15 +137,9 @@ int LAGraph_coloring_JP
         GrB_Index last_num_MIS_candidates = num_MIS_candidates;
         GrB_Index num_stalls = 0;
 
-        // prints: check if everything is good
-        printf("--------- A \n");
-        LAGraph_Matrix_Print(A, 2, stdout, msg);
+        // prints: check if everything is good        
         printf("--------- candidates \n");
         LAGraph_Vector_Print(candidates, 2, stdout, msg);
-        printf("--------- MIS_candidates \n");
-        LAGraph_Vector_Print(MIS_candidates, 2, stdout, msg);
-        printf("--------- weights \n");
-        LAGraph_Vector_Print(weights, 2, stdout, msg);
 
         while (num_MIS_candidates > 0) {
             
@@ -178,10 +177,10 @@ int LAGraph_coloring_JP
                 empty, GrB_ALL, n, GrB_DESC_S)) ;
 
             // print matrices
-            printf("--------- MIS_candidates \n");
-            LAGraph_Vector_Print(MIS_candidates, 2, stdout, msg) ;
             printf("--------- independent_set \n");
             LAGraph_Vector_Print(independent_set, 2, stdout, msg) ;
+            printf("--------- MIS_candidates \n");
+            LAGraph_Vector_Print(MIS_candidates, 2, stdout, msg) ;            
             
             
             // STEP 3: check quit condition
