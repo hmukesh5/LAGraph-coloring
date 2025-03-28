@@ -96,6 +96,7 @@ int LAGraph_coloring_JP
     //--------------------------------------------------------------------------
     GRB_TRY (GrB_Matrix_nrows (&n, A)) ;
     GRB_TRY (GrB_Vector_new (&weights, GrB_UINT64, n)) ;
+    GRB_TRY (GrB_assign (weights, NULL, NULL, 0, GrB_ALL, n, NULL)) ;
     LG_TRY (LAGraph_Random_Seed(weights, seed, msg)) ;
     GRB_TRY (GrB_Vector_new (&max_neighbor_weights, GrB_UINT64, n)) ;
     GRB_TRY (GrB_Vector_new (&empty, GrB_BOOL, n)) ;
