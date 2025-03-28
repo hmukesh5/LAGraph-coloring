@@ -132,7 +132,7 @@ int LAGraph_coloring_JP
         GRB_TRY (GrB_assign (MIS_candidates, GrB_NULL, GrB_NULL, candidates,
             GrB_ALL, n, GrB_DESC_R)) ;
         GRB_TRY (GrB_assign (weights, candidates, GrB_NULL, 0,
-            GrB_ALL, n, GrB_DESC_R)) ;
+            GrB_ALL, n, GrB_DESC_RS)) ;
         LG_TRY (LAGraph_Random_Seed(weights, seed, msg)) ;
 
         GrB_Index num_MIS_candidates = 0;        
