@@ -209,10 +209,11 @@ int LAGraph_coloring_JP
 
         // run JP
         // at this point, independent_set is now maximal
-        // mxm: find all colors of independent_set neighbors
-        // convert into bitmap
-        // GrB_mxv(indpendent_set_neighbors_colors, independent_set, GrB_NULL,
-        //     GrB_SECOND_SEMIRING_UINT64, A, JP_coloring_copy, GrB_DESC_RS) ;
+        // find colors of neighbors of independent_set
+        printf("trying neighbor colors...")
+        GRB_TRY( GrB_mxm(independent_set_neighbors_colors, independent_set, GrB_NULL,
+            GrB_SECOND_SEMIRING_UINT64, A, JP_coloring_copy, GrB_DESC_RS));
+        LAGraph_Matrix_Print(indpendent_set_neighbors_colors, 2, stdout, msg) ;
         
         // alternate approach: MIS
         // color independnet set
