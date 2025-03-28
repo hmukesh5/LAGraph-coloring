@@ -1274,6 +1274,19 @@ int LAGraph_coloring_MIS
     char *msg
 ) ;
 
+LAGRAPHX_PUBLIC
+int LAGraph_coloring_JP
+(
+    // outputs
+    GrB_Vector *JP_coloring,
+    int *JP_num_colors,
+    
+    // inputs
+    LAGraph_Graph G,
+    uint64_t seed,
+    char *msg
+) ;
+
 #if defined ( __cplusplus )
 }
 #endif

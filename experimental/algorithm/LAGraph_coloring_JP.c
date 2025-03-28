@@ -4,14 +4,20 @@
 // free workspace (runs on success)
 #define LG_FREE_WORK                \
 {                                   \
-    GrB_Free (&independent_set) ;   \
+    GrB_free (&weights) ;           \
+    GrB_free (&max_neighbor_weights); \
+    GrB_free (&empty) ;             \
+    GrB_free (&candidates) ;        \
+    GrB_free (&independent_set) ;   \
+    GrB_free (&independent_set_neighbors) ; \
+    GrB_free (&independent_set_neighbors_colors) ; \
+    GrB_free (&MIS_candidates) ;    \
 }
 // free everything (runs on error)
 #define LG_FREE_ALL                 \
 {                                   \
     LG_FREE_WORK ;                  \
-    GrB_Free (&JP_coloring_copy);   \
-    GrB_Free (&JP_num_colors_copy); \
+    GrB_free (&JP_coloring_copy);   \
 }
 
 
@@ -54,7 +60,7 @@ int LAGraph_coloring_JP
     // define objects
     //--------------------------------------------------------------------------
     GrB_Vector JP_coloring_copy = NULL;             // local version of JP_coloring
-    GrB_Vector JP_num_colors_copy = NULL;           // local version of JP_num_colors
+    int JP_num_colors_copy = 0;                     // local version of JP_num_colors
 
     GrB_Vector candidates = NULL;                   // candidates    
     GrB_Vector MIS_candidates = NULL;               // MIS candidates
@@ -62,6 +68,7 @@ int LAGraph_coloring_JP
     GrB_Vector weights = NULL;                      // random weights
     GrB_Vector max_neighbor_weights = NULL;         // maximum random weight of neighbors
     GrB_Vector independent_set_neighbors = NULL;    // neighbors of independent set
+    GrB_Vector independent_set_neighbors_colors = NULL; // colors of neighbors
 
     GrB_Vector empty = NULL;                        // empty vector for sparsification
     GrB_Matrix A = NULL;                            // adjacency matrix of G
@@ -92,9 +99,14 @@ int LAGraph_coloring_JP
     LG_TRY (LAGraph_Random_Seed(weights, seed, msg)) ;
     GRB_TRY (GrB_Vector_new (&max_neighbor_weights, GrB_UINT64, n)) ;
     GRB_TRY (GrB_Vector_new (&empty, GrB_BOOL, n)) ;
+    GRB_TRY (GrB_Vector_new (&independent_set, GrB_BOOL, n)) ;
     GRB_TRY (GrB_Vector_new (&independent_set_neighbors, GrB_BOOL, n)) ;
+    GRB_TRY (GrB_Matrix_new (&independent_set_neighbors_colors, GrB_UINT64, n, n))
     GRB_TRY (GrB_Vector_new (&candidates, GrB_BOOL, n)) ;
-    GRB_TRY (GrB_Vector_new (&MIS_candidates, GrB_BOOL, n)) ;
+    GRB_TRY (GrB_assign (candidates, GrB_NULL, GrB_NULL, true, GrB_ALL, n, GrB_NULL)) ;
+    GRB_TRY (GrB_Vector_new (&MIS_candidates, GrB_BOOL, n)) ; 
+
+    GRB_TRY (GrB_Vector_new (&JP_coloring_copy, GrB_UINT64, n)) ;   
 
     //--------------------------------------------------------------------------
     // optional - handle singletons and ignore_node
@@ -104,7 +116,8 @@ int LAGraph_coloring_JP
     // main algorithm
     //--------------------------------------------------------------------------
     GrB_Index num_candidates = 0;
-    GRB_TRY (GrB_Vector_nvals (&num_candidates, candidates)) ;    
+    GRB_TRY (GrB_Vector_nvals (&num_candidates, candidates)) ;
+    int64_t curr_color = 0;
 
     while (num_candidates > 0) {
         // STEP 0: copy candidates to MIS_candidates
@@ -134,17 +147,18 @@ int LAGraph_coloring_JP
             // FIXME: add push vs pull        
             GRB_TRY(GrB_mxv(max_neighbor_weights, MIS_candidates, GrB_NULL,                 
                 GrB_MAX_SECOND_SEMIRING_UINT64, A, weights, GrB_DESC_RS));
-            GRB_TRY(GrB_eWiseAdd(independent_set, GrB_NULL, GrB_LOR,
-                GrB_GT_UINT64, weights, max_neighbor_weights, GrB_NULL));
+            GRB_TRY(GrB_eWiseAdd(independent_set, MIS_candidates, GrB_LOR,
+                GrB_GT_UINT64, weights, max_neighbor_weights, GrB_DESC_S));
             GRB_TRY(GrB_select(independent_set, GrB_NULL, GrB_NULL, 
                 GrB_VALUEEQ_BOOL, independent_set, true, GrB_NULL));
 
             
-            // STEP 2: cleanup candidates and check quit condition
+            // STEP 2: cleanup candidates, check quit condition + stall
             // assign: remove independent_set from candidates
             // mxv: find neighbors of independent set + replace vector
             // assign: remove independent_set from candidates
-            // nvals + if: break if no more candidates            
+            // assign: remove weights for non-candidates for step 1
+            // FIXME: add push vs pull            
             GRB_TRY (GrB_assign (MIS_candidates, independent_set, GrB_NULL, empty,
                 GrB_ALL, n, GrB_DESC_S)) ;
             GRB_TRY (GrB_mxv (independent_set_neighbors, MIS_candidates, GrB_NULL,
@@ -152,24 +166,15 @@ int LAGraph_coloring_JP
             GRB_TRY (GrB_assign (MIS_candidates, independent_set_neighbors, GrB_NULL,
                 empty, GrB_ALL, n, GrB_DESC_S)) ;
             
-            GRB_TRY (GrB_Vector_nvals (&num_candidates, MIS_candidates)) ;
             
-            if (num_candidates == 0) { break ; }
-            // FIXME: move stall condition here
-            
-            // STEP 3: get ready for next iteration            
-            // assign: remove weights for non-candidates for step 1
-            // FIXME: add push vs pull            
-            GRB_TRY (GrB_assign (weights, MIS_candidates, NULL, weights,
-                GrB_ALL, n, GrB_DESC_RS)) ;
-            
-            // FIXME: move step into step 2
-            // STEP 4: check for a stall (if 2 nodes have exact same weight)
+            // STEP 3: check quit condition
+            // nvals + if: break if no more candidates
             // if: check if candidates is same as last iteration
             //     if so, increment stall count, break if too many
             //     and redo weights
             // save last num candidates
             GRB_TRY (GrB_Vector_nvals (&num_MIS_candidates, MIS_candidates)) ;
+            if (num_MIS_candidates == 0) { break ; }
             if (num_MIS_candidates == last_num_MIS_candidates) {
                 num_stalls++ ;
                 LG_ASSERT_MSG (num_stalls <= NUM_ALLOWED_STALLS, JP_COLORING_STALLED, "MIS stalled") ;
@@ -180,9 +185,23 @@ int LAGraph_coloring_JP
         }
 
         // run JP
+        // at this point, independent_set is now maximal
+        // mxm: find all colors of independent_set neighbors
+        // convert into bitmap
+        // GrB_mxv(indpendent_set_neighbors_colors, independent_set, GrB_NULL,
+        //     GrB_SECOND_SEMIRING_UINT64, A, JP_coloring_copy, GrB_DESC_RS) ;
+        
+        // alternate approach: MIS
+        // color independnet set
+        GRB_TRY(GrB_assign(JP_coloring_copy, independent_set, GrB_NULL, curr_color, GrB_ALL, n, GrB_DESC_S)) ;
+        curr_color ++;
 
-        // mark as completed
+        // prepare for next iteration
+        // remove independent_set from candidates
+        GRB_TRY(GrB_assign(candidates, independent_set, GrB_NULL, empty, GrB_ALL, n, GrB_DESC_S)) ;
+        GRB_TRY (GrB_Vector_nvals (&num_candidates, candidates)) ;        
     }
+    JP_num_colors_copy = curr_color - 1;
     
     //--------------------------------------------------------------------------
     // clean up and return outputs
